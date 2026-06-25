@@ -578,6 +578,23 @@ function saveProfile() {
     name: document.getElementById('profile-name').value,
     email: document.getElementById('profile-email').value };
   S.set('profile', data);
+  // ---НАЧАЛО ОТПРАВКИ В N8N ---
+  fetch ('https://reruy.app.n8n.cloud/webhook-test/1596e1e7-8d21-4807-8f5f-63bf97d4207b',{method: 'POST',
+  // Метод отправки headers: {
+                              'Content-Type': 'application/json' // Говорим,что отправляем json
+                               },
+         body: JSON.stringify(data) // Сами данные
+         })
+  .then (responce =>{
+    // Если все ушлоуспешно, показываем уведомление
+    showToast('✅ Профиль сохранен в n8n);
+         })
+  .catch(errorm=> {
+    // Если ошибка , тоже показываем 
+    showToast ('❌ Ошибка отправки');
+    console.error(error);
+  });
+  //---КОНЕЦ ОТПРАВКИ В N8N ---
   if (tg) tg.sendData(JSON.stringify(data));
   showToast('✅ Профиль сохранён');
 }
@@ -609,7 +626,23 @@ if (tg) {
   tg.MainButton.show();
   tg.MainButton.onClick(() => {
     tg.sendData(JSON.stringify({ action: 'write_article' }));
+
+    //Оправляем сигнал в n8n
+    fetch ('https://reruy.app.n8n.cloud/webhook-test/1596e1e7-8d21-4807-8f5f-63bf97d4207b', {
+      method: 'POST',
+      headers: {
+         'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    .then(() => {
+      //Закрываем мини-апп ТОЛЬКО ПОСЛЕ ТОГО, как запрос ушел в n8n
     tg.close();
+  })
+    .catch(error => {
+      console.error('Ошибка:',error);
+      tg.close(); //Все равно закрываем,даже если сбой
+    });
   });
 }
 
