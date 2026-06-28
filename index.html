@@ -626,9 +626,7 @@ if (tg) {
   tg.MainButton.setText('✍️ Написать статью');
   tg.MainButton.show();
   tg.MainButton.onClick(() => {
-    tg.sendData(JSON.stringify({ action: 'write_article' }));
-    fetch(...,{ body: JSON.stringlify(data) })
-
+   
     //Оправляем сигнал в n8n
     fetch ('https://reruy.app.n8n.cloud/webhook-test/1596e1e7-8d21-4807-8f5f-63bf97d4207b', {
       method: 'POST',
